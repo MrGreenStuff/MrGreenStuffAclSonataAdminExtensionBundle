@@ -97,12 +97,11 @@ class AclAdminExtension extends AdminExtension
             foreach ($entriesStmt->fetchAll() as $row) {
                 $ids[] = $row['object_identifier'];
             }
-			//IF THERE IS NOT DIRECT RESULT WE MADE A QUERY ON THE MASTER ACL CLASS
-			//Test if method getMasterACLclass and getPathToMasterACL exist on the admin CLASS -> SEE THE DOC
-            if (method_exists($admin,'getMasterACLclass') && method_exists($admin,'getPathToMasterACL')) {
+			//Test if method getMasterAclClass and getMasterAclPath exist on the admin CLASS -> SEE THE DOC
+            if (method_exists($admin,'getMasterAclClass') && method_exists($admin,'getMasterAclPath')) {
 				$classStmt = $this->databaseConnection->prepare('SELECT id FROM acl_classes WHERE class_type = :classType');
-				//QUERY ON MASTER ACL CLASS (method $admin->getMasterACLclass() return a string like 'Acme\Bundle\Entity\MasterACLEntity');
-				$classStmt->bindValue('classType', $admin->getMasterACLclass());
+				//QUERY ON MASTER ACL CLASS (method $admin->getMasterAclClass() return a string like 'Acme\Bundle\Entity\MasterACLEntity');
+				$classStmt->bindValue('classType', $admin->getMasterAclClass());
 				$classStmt->execute();
 
 				$classId = $classStmt->fetchColumn();
@@ -119,16 +118,7 @@ class AclAdminExtension extends AdminExtension
 				foreach ($entriesStmt->fetchAll() as $row) {
 					$idsMaster[] = $row['object_identifier'];
 				}
-				/*The method $admin->getPathToMasterACL() have to return an array (BE CAREFULL OF ORDER) like : 
-					array(
-						array('firstChild','c1'),
-						array('secondChild','c2'),
-						array('thirdChild','c3')
-						...
-					)
-					where the first argument is the name of the property relation and second a unique selector (TODO MADE NAME SELECTOR AUTOMATIC)
-				*/
-				$parents=$admin->getPathToMasterACL();
+				$parents=$admin->getMasterAclPath();
 				//HERE UPDATE THE QUERY
 				foreach($parents as $key=>$parent){
 					//FIRST shorcut is 'o'
@@ -140,9 +130,9 @@ class AclAdminExtension extends AdminExtension
 					}
 					//HERE WE ARE AFTER THE LEFT JOIN ON MASTER ACL CLASS WE PASS idsMaster array param
 					if(($key+1)==count($parents)){
-						//HERE FOR OBJECT CREATED BY CURRENT USER
-						if(count($ids)){
-							//création de l'expression OR EXPRESSION
+						//HERE FOR OBJECT CREATED BY CURRENT USER AND WITH STRICT MODE IS OF
+						if(count($ids) && !method_exists($admin,'getMasterAclStrict') && $admin->getMasterAclStrict()==false){
+							//OR EXPRESSION WITH PARENTHESIS
 							$orCondition = $query->expr()->orx();
 							$orCondition->add($query->expr()->in('o.id', ':ids'));
 							$orCondition->add($query->expr()->in($parent[1].'.id',':idsMaster'));
