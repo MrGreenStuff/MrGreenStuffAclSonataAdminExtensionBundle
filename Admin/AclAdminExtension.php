@@ -131,7 +131,7 @@ class AclAdminExtension extends AdminExtension
 					//HERE WE ARE AFTER THE LEFT JOIN ON MASTER ACL CLASS WE PASS idsMaster array param
 					if(($key+1)==count($parents)){
 						//HERE FOR OBJECT CREATED BY CURRENT USER AND WITH STRICT MODE IS OF
-						if(count($ids) && !method_exists($admin,'getMasterAclStrict') && $admin->getMasterAclStrict()==false){
+						if(count($ids) && method_exists($admin,'getMasterAclStrict') && !$admin->getMasterAclStrict()){
 							//OR EXPRESSION WITH PARENTHESIS
 							$orCondition = $query->expr()->orx();
 							$orCondition->add($query->expr()->in('o.id', ':ids'));

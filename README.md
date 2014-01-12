@@ -60,20 +60,20 @@ This extension is automatically enabled for all admins.
 - Admin keep SUPER_ADMIN role (normal behavior)
     
 ### Configuration :
-- Create method : getMasterACLclass() on your sonata admin classes (only classes where you want to enabled the behavior). This method must return a string of master entity ACL like :
+- Create method : getMasterAclClass() on your sonata admin classes (only classes where you want to enabled the behavior). This method must return a string of master entity ACL like :
     
 ```php
 /*In Shop and Product admin classes*/
-public function getMasterACLclass(){
+public function getMasterAclClass(){
     return 'Acme\DemoBundle\Entity\Country';
 }
 ```
     
-- Create method getPathToMasterACL() on your sonata admin classes (only classes where you want to enabled the behavior). This method must return a array like :
+- Create method getMasterAclPath() on your sonata admin classes (only classes where you want to enabled the behavior). This method must return a array like :
     
 ```php
 /*In Shop admin class*/
-public function getPathToMasterACL(){
+public function getMasterAclPath(){
     return  array(
                 array('coutry','c')
                 );
@@ -81,7 +81,7 @@ public function getPathToMasterACL(){
 //Where 'country' is the property name of the Shop entity who made the relation with Country Entity and 'c' a unique identifier (IMPORTANT the unique shortcut identifier CANNOT BE 'o' because 'o' is the default identifier of Sonata Admin)
     
 /*In Product admin class*/
-public function getPathToMasterACL(){
+public function getMasterAclPath(){
     return  array(
                  array('shop','s'),
                  array('coutry','c')
@@ -90,6 +90,18 @@ public function getPathToMasterACL(){
 ```
 #### BE CAREFULL WHITH ORDER IN ARRAY IT MUST BE parent->grandParent->grandGrandParent... untill the MASTER ACL CLASS DEFINED ABOVE
 
+### DISABLED STRICT MODE (Enabled by default)
+When an child object of master ACL is created by an user the ACL is still added like without the bundle.
+When you delete the ACL acces to one record of the master class the users still can't acces to record created by him before the ACL master update (Even if ACL record defined him as owner).
+If you want that users still can access to child record created by him before the ACL master update you have to disabled the stict mode :
+
+To do this write the method getMasterAclStrict() in the admin class.
+
+```php
+public function getMasterAclStrict(){
+    return false;
+}
+```
 
 ## Credits
 
