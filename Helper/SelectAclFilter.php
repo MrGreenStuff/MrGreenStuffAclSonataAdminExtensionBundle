@@ -8,7 +8,7 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 class SelectAclFilter
 {
 /*ACL SELECT FILTERING*/
-	public function updateQueryAcl($query,$admin,$isTheMaster=false){
+	public static function updateQueryAcl($query,$admin,$isTheMaster=false){
 		$user = $admin->container->get('security.context')->getToken()->getUser();
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
@@ -100,3 +100,4 @@ class SelectAclFilter
 			}
 		}
 	}
+}
