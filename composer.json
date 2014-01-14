@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "ACL list filtering for SonataAdmin with MASTER ACL",
     "keywords": ["sonata", "admin", "acl"],
-    "homepage": "http://les-tilleuls.coop",
+    "homepage": "http://www.agence-web-grenoble.fr",
     "license": "MIT",
     "authors": [
         {
@@ -13,7 +13,8 @@
         },
 		{
             "name": "JUILLARD Yoann",
-            "email": "juillard.yoann@gmail.com"
+            "email": "yoann@agence-web-grenoble.fr",
+			"homepage": "http://www.agence-web-grenoble.fr"
         }
     ],
     "require": {
