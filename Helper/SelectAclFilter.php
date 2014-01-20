@@ -66,9 +66,9 @@ class SelectAclFilter
 				if(!$isTheMaster){
 					foreach($parents as $key=>$parent){
 							//FIRST shorcut is 'o'
-							if($key==0){
+							if($key==1){
 									$query->leftJoin('o.'.$parent[0],$parent[1]);
-							}else{
+							}elseif($key>1){
 							//Shortcut is precedent shortcut
 									$query->leftJoin($parents[$key-1][1].'.'.$parent[0],$parent[1]);
 							}
