@@ -10,6 +10,9 @@ class SelectAclFilter
 /*ACL SELECT FILTERING*/
 	public static function updateQueryAcl($query,$admin,$isTheMaster=false){
 		$user = $admin->container->get('security.context')->getToken()->getUser();
+		if ($admin->isGranted(sprintf($admin->getSecurityHandler()->getBaseRole($admin), 'ADMIN'))) {
+            return;
+        }
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
         // Get identity ACL identifier
@@ -65,6 +68,7 @@ class SelectAclFilter
 				//HERE UPDATE THE QUERY
 				if(!$isTheMaster){
 					foreach($parents as $key=>$parent){
+						if(empty($parent[2])){
 							//FIRST shorcut is 'o'
 							if($key==1){
 									$query->leftJoin('o.'.$parent[0],$parent[1]);
@@ -85,6 +89,7 @@ class SelectAclFilter
 											$query->andWhere($parent[1].'.id IN (:idsMaster'.$key.')')->setParameter('idsMaster'.$key, $idsMaster);
 									}
 							}
+						}
 					}
 				}else{
 					$query->andWhere('o.id IN (:idsMaster)')->setParameter('idsMaster', $idsMaster);
